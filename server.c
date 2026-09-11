@@ -5,6 +5,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<string.h>
+#include<errno.h>
 
 typedef struct {
     char *ip_address;
@@ -17,8 +18,14 @@ struct sockaddr_in create_sockaddr(char *ip_addr, uint16_t port){
 
     address.sin_family = AF_INET;
 
-    if(inet_pton(address.sin_family, ip_addr, &address.sin_addr) < 0){
-        perror("create_sockaddr");
+    int result = inet_pton(address.sin_family, ip_addr, &address.sin_addr);
+    if(result != 1){
+        if (result < 0){
+            perror("inet_pton");
+        }
+        else{
+            fprintf(stderr, "Invalid IP-Address %s \n", ip_addr);
+        }
         return (struct sockaddr_in){0};
     }
     address.sin_port = htons(port);
@@ -55,22 +62,6 @@ struct sockaddr_in bind_socket_variadic(int socket_fd, binding_args args){
 
 #define bind_socket(socket_fd, ...) bind_socket_variadic(socket_fd, (binding_args) {__VA_ARGS__})
 
-void handle_reading(ssize_t bytes_read, int client_socket){
-    if(bytes_read < 0){
-        perror("read");
-        close(client_socket);
-        return;
-    }
-
-    if(bytes_read == 0){
-        printf("Client closed connection. \n");
-        close(client_socket);
-        return;
-    }
-
-    // possibility to react to certain messages, like shutdown, can be appended here.
-}
-
 void event_loop(int sock){
     while (1) {
         struct sockaddr_in client_address;
@@ -97,7 +88,17 @@ void event_loop(int sock){
             sizeof(buffer) - 1
         );
 
-        handle_reading(bytes_read, new_socket);
+        if(bytes_read < 1){
+            perror("reading");
+            close(new_socket);
+            continue;
+        }
+
+        if(bytes_read == 0){
+            printf("Client closed connection.");
+            close(new_socket);
+            continue;
+        }
 
         buffer[bytes_read] = '\0';
 
