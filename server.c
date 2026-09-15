@@ -10,7 +10,7 @@
 #define PORT 7890
 
 int create_socket(int *sock){
-    *sock = socket(PF_INET, SOCK_STREAM, 0); 
+    *sock = socket(AF_INET, SOCK_STREAM, 0); 
     if(*sock < 0){
         perror("create_socket");
         return -1;
@@ -32,7 +32,7 @@ int set_socket_option(int *sock){
 void set_own_addr_information(struct sockaddr_in *addr){
     addr->sin_family = AF_INET;
     addr->sin_port = htons(PORT);
-    addr->sin_addr.s_addr = 0;
+    addr->sin_addr.s_addr = htonl(INADDR_ANY);
     memset(&(addr->sin_zero), '\0', 8);
 }
 
@@ -76,15 +76,22 @@ void event_loop(int sock){
             perror("accept");
             continue;
         }
-
-        printf("server: new connection from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-        send(new_sock,  greeting, sizeof(greeting)-1, 0);
+        char ip_str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET,&(client_addr.sin_addr), ip_str, sizeof(ip_str));
+        printf("server: new connection from %s:%d\n", ip_str, ntohs(client_addr.sin_port));
+        ssize_t sent = send(new_sock, greeting, sizeof(greeting) -1, 0);
+        if (sent < 0){
+            perror("send");
+        }
         recv_length = recv(new_sock, buffer, sizeof(buffer), 0);
-        while(recv_length > 0){
+        while((recv_length = recv(new_sock, buffer, sizeof(buffer), 0)) > 0 ){
             printf("RECV: %zd bytes\n", recv_length);
             dump(buffer, recv_length);
-            recv_length = recv(new_sock, buffer, sizeof(buffer), 0);
         }
+        if(recv_length < 0){
+            perror("receive");
+        }
+
         close(new_sock);
     }
 }
@@ -96,6 +103,7 @@ int main(void){
     }
     struct sockaddr_in host_addr;
     if(set_socket_option(&sock) < 0){
+        close(sock);
         return EXIT_FAILURE;
     }
     set_own_addr_information(&host_addr);
