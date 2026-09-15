@@ -7,27 +7,26 @@
 #include<string.h>
 #include<ctype.h>
 
-typedef struct {
-    char *ip_address;
-    uint16_t port;
-} binding_args;
-
 #define PORT 7890
 
-void create_socket(int *sock){
+int create_socket(int *sock){
     *sock = socket(PF_INET, SOCK_STREAM, 0); 
     if(*sock < 0){
         perror("create_socket");
-        return;
+        return -1;
     }
+
+    return 0;
 }
 
-void set_socket_option(int *sock){
+int set_socket_option(int *sock){
     int yes = 1;
     if (setsockopt(*sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0){ 
         perror("Setting-sock-Option");
-        return;
+        return -1;
     }
+
+    return 0;
 }
 
 void set_own_addr_information(struct sockaddr_in *addr){
@@ -38,7 +37,6 @@ void set_own_addr_information(struct sockaddr_in *addr){
 }
 
 void dump(const unsigned char *data, const unsigned int length){
-    unsigned char byte;
     for(size_t i = 0; i < length; i+=16){
         size_t row_length = length - i;
         if (row_length > 16){
@@ -93,12 +91,16 @@ void event_loop(int sock){
 
 int main(void){
     int sock;
-    create_socket(&sock);
-    struct sockaddr_in host_addr, client_addr;
-    set_socket_option(&sock);
+    if(create_socket(&sock) < 0){
+        return EXIT_FAILURE;
+    }
+    struct sockaddr_in host_addr;
+    if(set_socket_option(&sock) < 0){
+        return EXIT_FAILURE;
+    }
     set_own_addr_information(&host_addr);
 
-    if(bind(sock, (struct sockaddr *)&host_addr, sizeof(struct sockaddr)) < 0){
+    if(bind(sock, (struct sockaddr *)&host_addr, sizeof(host_addr)) < 0){
         perror("bind");
         close(sock);
         return EXIT_FAILURE;
