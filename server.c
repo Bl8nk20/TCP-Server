@@ -45,10 +45,10 @@ void dump(const unsigned char *data, const unsigned int length){
 
         for(size_t j = 0; j < 16; j++){
             if(j < row_length){
-                printf("%02x", data[i + j]);
+                printf("%02x ", data[i + j]);
             }
             else{
-                printf("  ");
+                printf("   ");
             }
         }
         
@@ -83,7 +83,6 @@ void event_loop(int sock){
         if (sent < 0){
             perror("send");
         }
-        recv_length = recv(new_sock, buffer, sizeof(buffer), 0);
         while((recv_length = recv(new_sock, buffer, sizeof(buffer), 0)) > 0 ){
             printf("RECV: %zd bytes\n", recv_length);
             dump(buffer, recv_length);
