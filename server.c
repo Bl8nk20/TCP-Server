@@ -7,6 +7,7 @@
 #include<string.h>
 #include<ctype.h>
 
+#include "shared.h"
 #define PORT 7890
 
 int create_socket(void){
@@ -27,32 +28,6 @@ int set_socket_option(int sock){
     }
 
     return 0;
-}
-
-void dump(const unsigned char *data, const unsigned int length){
-    for(size_t i = 0; i < length; i+=16){
-        size_t row_length = length - i;
-        if (row_length > 16){
-            row_length = 16;
-        }
-
-        for(size_t j = 0; j < 16; j++){
-            if(j < row_length){
-                printf("%02x ", data[i + j]);
-            }
-            else{
-                printf("   ");
-            }
-        }
-        
-        printf("| ");
-        for(size_t j = 0; j < row_length; j++){
-            unsigned char c = data[i + j];
-            printf("%c", isprint(c) ? c : '.');
-        }
-        
-        printf("\n");
-    }
 }
 
 void event_loop(int sock){
