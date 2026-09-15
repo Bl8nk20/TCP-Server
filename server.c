@@ -9,31 +9,24 @@
 
 #define PORT 7890
 
-int create_socket(int *sock){
-    *sock = socket(AF_INET, SOCK_STREAM, 0); 
-    if(*sock < 0){
+int create_socket(void){
+    int sock = socket(AF_INET, SOCK_STREAM, 0); 
+    if(sock < 0){
         perror("create_socket");
         return -1;
     }
 
-    return 0;
+    return sock;
 }
 
-int set_socket_option(int *sock){
+int set_socket_option(int sock){
     int yes = 1;
-    if (setsockopt(*sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0){ 
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0){ 
         perror("Setting-sock-Option");
         return -1;
     }
 
     return 0;
-}
-
-void set_own_addr_information(struct sockaddr_in *addr){
-    addr->sin_family = AF_INET;
-    addr->sin_port = htons(PORT);
-    addr->sin_addr.s_addr = htonl(INADDR_ANY);
-    memset(&(addr->sin_zero), '\0', 8);
 }
 
 void dump(const unsigned char *data, const unsigned int length){
@@ -96,16 +89,20 @@ void event_loop(int sock){
 }
 
 int main(void){
-    int sock;
-    if(create_socket(&sock) < 0){
+    int sock = create_socket();
+    if(sock < 0){
         return EXIT_FAILURE;
     }
-    struct sockaddr_in host_addr;
-    if(set_socket_option(&sock) < 0){
+    if(set_socket_option(sock) < 0){
         close(sock);
         return EXIT_FAILURE;
     }
-    set_own_addr_information(&host_addr);
+
+    struct sockaddr_in host_addr = {
+        .sin_family = AF_INET,
+        .sin_port = htons(PORT),
+        .sin_addr.s_addr = htonl(INADDR_ANY)
+    };
 
     if(bind(sock, (struct sockaddr *)&host_addr, sizeof(host_addr)) < 0){
         perror("bind");
