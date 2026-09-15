@@ -5,6 +5,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<string.h>
+#include<ctype.h>
 
 typedef struct {
     char *ip_address;
@@ -38,34 +39,38 @@ void set_own_addr_information(struct sockaddr_in *addr){
 
 void dump(const unsigned char *data, const unsigned int length){
     unsigned char byte;
-    unsigned int i, j;
-    for(i = 0; i < length; i++){
-        byte = data[i];
-        printf("%02x", data[i]); // byte in hexadecimal
-        if((i%16)==15 || i ==length - 1){
-            for(j=0; j < 15-(i%16);j++){
-                printf(" ");
-            }
-            printf("| ");
-            for(j=i-(i%16); j<= i; j++){
-                byte = data[j];
-                if(byte > 31 && byte < 127){
-                    printf("%c", byte);
-                }
-                else{
-                    printf(".");
-                }
-            }
-            printf("\n");
+    for(size_t i = 0; i < length; i+=16){
+        size_t row_length = length - i;
+        if (row_length > 16){
+            row_length = 16;
         }
+
+        for(size_t j = 0; j < 16; j++){
+            if(j < row_length){
+                printf("%02x", data[i + j]);
+            }
+            else{
+                printf("  ");
+            }
+        }
+        
+        printf("| ");
+        for(size_t j = 0; j < row_length; j++){
+            unsigned char c = data[i + j];
+            printf("%c", isprint(c) ? c : '.');
+        }
+        
+        printf("\n");
     }
 }
 
 void event_loop(int sock){
     socklen_t sin_size;
     struct sockaddr_in client_addr;
-    int new_sock, recv_length;
-    unsigned char buffer[1024] = {0};
+    int new_sock;
+    ssize_t recv_length;
+    static const char greeting[] = "Hello there! \n";
+    unsigned char buffer[1024];
     while (1) {
         sin_size = sizeof(struct sockaddr_in);
         new_sock = accept(sock, (struct sockaddr *)&client_addr, &sin_size); 
@@ -75,12 +80,12 @@ void event_loop(int sock){
         }
 
         printf("server: new connection from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-        send(new_sock,  "Hello, there!\n", 13, 0);
-        recv_length = recv(new_sock, buffer, 1024, 0);
+        send(new_sock,  greeting, sizeof(greeting)-1, 0);
+        recv_length = recv(new_sock, buffer, sizeof(buffer), 0);
         while(recv_length > 0){
-            printf("RECV: %d bytes\n", recv_length);
+            printf("RECV: %zd bytes\n", recv_length);
             dump(buffer, recv_length);
-            recv_length = recv(new_sock, buffer, 1024, 0);
+            recv_length = recv(new_sock, buffer, sizeof(buffer), 0);
         }
         close(new_sock);
     }
