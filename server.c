@@ -7,7 +7,7 @@
 #include<string.h>
 #include<ctype.h>
 
-#include "shared.h"
+#include "shared/shared.h"
 #define PORT 7890
 
 int create_socket(void){
