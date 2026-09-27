@@ -8,7 +8,7 @@
 #include<ctype.h>
 
 #include "shared/shared.h"
-#include "factory/service_factory.h"
+#include "service_factory/factory.h"
 
 #define PORT 7890
 
@@ -54,16 +54,17 @@ void event_loop(int sock){
             perror("send");
         }
         while((recv_length = recv(new_sock, buffer, sizeof(buffer), 0)) > 0 ){
+            size_t payload_len = (size_t)recv_length;
             printf("RECV: %zd bytes\n", recv_length);
-            dump(buffer, recv_length);
+            dump(buffer, payload_len);
             
             CommandContext ctx = {
-                .client_sox = new_sock,
+                .client_sock = new_sock,
                 .payload = buffer,
-                .payload_len = recv_len
+                .payload_len = payload_len
             };
 
-            Command *cmd = service_factory_create(buffer, recv_len);
+            Command *cmd = service_factory_create(buffer, payload_len);
             if (cmd){
                 cmd->execute(cmd, &ctx);
                 cmd->destroy(cmd);

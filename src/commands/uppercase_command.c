@@ -13,7 +13,7 @@ static void execute_upper(Command *self, const CommandContext *ctx){
     size_t len = ctx->payload_len < sizeof(buffer) ? ctx->payload_len : sizeof(buffer) - 1;
 
     for(size_t i = 0; i < len; i++){
-        buffer[i] = toupper(ctx->payload[i]);
+        buffer[i] = (char)toupper(ctx->payload[i]);
     }
 
     send(ctx->client_sock, buffer, len, 0);

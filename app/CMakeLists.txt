@@ -5,8 +5,9 @@ add_executable(${EXECUTABLE_NAME} ${APP_SOURCE})
 target_link_libraries(
     ${EXECUTABLE_NAME}
     PRIVATE 
+    SharedLib
     CommandLib
-    SeriveFactoryLib
+    ServiceFactoryLib
     # hier weitere Libraries hinzufügen...
 )
 

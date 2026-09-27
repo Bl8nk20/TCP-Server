@@ -16,8 +16,6 @@ typedef struct Command{
     void(*destroy)(struct Command *self);
 }Command;
 
-static void command_destroy_common(Command *self){
-    free(self);
-}
+void command_destroy_common(Command *self);
 
 #endif
