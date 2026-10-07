@@ -7,3 +7,6 @@ prepare:
 
 compile: 
 	cd build && cmake -S .. -B .
+
+build_all:
+	cd build && cmake --build .
