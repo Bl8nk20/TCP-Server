@@ -5,5 +5,6 @@
 
 Command* create_echo_command(void);
 Command* create_uppercase_command(void);
+Command* create_dungeon_command(void);
 
 #endif
