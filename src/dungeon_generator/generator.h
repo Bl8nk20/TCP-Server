@@ -23,6 +23,6 @@
  *  * Struct für Dungeon-Type -> Davon abhängig machen, welcher Generator aufgerufen wird.
  *  * 
  * Inhalt TypeStruct:
- *  Enum für Verschiedene Typen (Höhle
+ *  Enum für Verschiedene Typen (Höhle,
  */
 
