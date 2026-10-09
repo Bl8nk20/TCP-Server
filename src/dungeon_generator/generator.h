@@ -17,5 +17,12 @@
  *  5. Binary Space Partition (BSP) implementieren
  *  6. Räume als Generische Structs vorbereiten
  *  7. Multi-Layer-Dungeons implementieren, indem BSP angepasst/erweitert wird.
+ *
+ * Gedanken:
+ *  * Struct für (Beliebige-)Übergabeparameter
+ *  * Struct für Dungeon-Type -> Davon abhängig machen, welcher Generator aufgerufen wird.
+ *  * 
+ * Inhalt TypeStruct:
+ *  Enum für Verschiedene Typen (Höhle
  */
 
