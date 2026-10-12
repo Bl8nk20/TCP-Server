@@ -26,3 +26,21 @@
  *  Enum für Verschiedene Typen (Höhle,
  */
 
+typedef enum{
+    Cave,
+    Stronghold,
+    Nothing
+}dungeonType
+
+typedef struct{
+    size_t x_axis;
+    size_t y_axis;
+    bool isMultiLayeredEnabled;
+    size_t amtLayers;
+    size_t seed;
+}params
+
+typedef struct{
+    int amtRepetitions;
+}CellularOptions
+
