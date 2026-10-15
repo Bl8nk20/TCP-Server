@@ -1,4 +1,5 @@
 add_subdirectory(shared)
+add_subdirectory(grid)
 add_subdirectory(dungeon_generator)
 add_subdirectory(commands)
 add_subdirectory(service_factory)
