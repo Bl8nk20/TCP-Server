@@ -7,7 +7,7 @@ typedef enum{
     SERVICE_ECHO,
     SERVICE_UPPERCASE,
     SERVICE_DUNGEON,
-    SERIVCE_UNKNOWN
+    SERVICE_UNKNOWN
 } ServiceType;
 
 Command* service_factory_create(const unsigned char *buffer, size_t len);
