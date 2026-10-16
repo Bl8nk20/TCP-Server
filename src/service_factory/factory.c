@@ -13,7 +13,9 @@ static ServiceType parse_service_type(const unsigned char *buffer, size_t len){
     if (len >= 5 && memcmp(buffer, "UPPER", 5) == 0) {
         return SERVICE_UPPERCASE;
     }
-
+    if (len >= 3 && memcmp(buffer, "MAP", 3) == 0){
+        return SERVICE_DUNGEON;
+    }
     return SERVICE_UNKNOWN;
 }
 
@@ -25,6 +27,8 @@ Command* service_factory_create(const unsigned char *buffer, size_t len){
             return create_echo_command();
         case SERVICE_UPPERCASE:
             return create_uppercase_command();
+        case SERVICE_DUNGEON:
+            return create_dungeon_command();
         case SERVICE_UNKNOWN:
         default:
             return NULL;

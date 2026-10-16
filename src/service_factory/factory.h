@@ -6,6 +6,7 @@
 typedef enum{
     SERVICE_ECHO,
     SERVICE_UPPERCASE,
+    SERVICE_DUNGEON,
     SERVICE_UNKNOWN
 } ServiceType;
 

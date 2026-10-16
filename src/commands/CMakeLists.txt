@@ -3,6 +3,7 @@ set(
     "${CMAKE_CURRENT_SOURCE_DIR}/command.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/echo_command.c" 
     "${CMAKE_CURRENT_SOURCE_DIR}/uppercase_command.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dungeon_gen_command.c"
 )
 
 set(
