@@ -17,6 +17,12 @@ add_library(
     ${LIBRARY_HEADERS_DUNGEON_GENERATOR}
 )
 
+target_link_libraries(
+    "DungeonGeneratorLib"
+    PUBLIC
+    "GridLib"
+)
+
 target_include_directories(
     "DungeonGeneratorLib"
     PUBLIC

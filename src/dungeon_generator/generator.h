@@ -1,3 +1,6 @@
+#ifndef DUNGEON_GENERATOR_H
+#define DUNGEON_GENERATOR_H
+
 /*
  * Basisklasse / Interface für ein Dungeon Generator
  * Features, die der Generator beinhalten soll:
@@ -26,21 +29,30 @@
  *  Enum für Verschiedene Typen (Höhle,
  */
 
+#include "grid/grid.h"
 typedef enum{
-    Cave,
-    Stronghold,
-    Nothing
-}dungeonType
+    CAVE,
+    STRONGHOLD,
+    NOTHING
+}DungeonType;
 
 typedef struct{
-    size_t x_axis;
-    size_t y_axis;
-    bool isMultiLayeredEnabled;
-    size_t amtLayers;
-    size_t seed;
-}params
+    size_t width;
+    size_t height;
+    bool is_multi_layered;
+    size_t amt_Layers;
+    unsigned int seed;
+    int amt_Repetitions;
+}DungeonParams;
 
 typedef struct{
-    int amtRepetitions;
-}CellularOptions
+    DungeonType type;
+    DungeonGrid* (*generate)(const DungeonParams *params);
+    void (*free_grid)(DungeonGrid *grid);
+}DungeonGenerator;
 
+bool validate_inputs(const DungeonParams *params);
+DungeonGenerator* dungeon_generator_create(DungeonType type);
+void generate_dungeor_destroy(DungeonGenerator *generator);
+
+#endif

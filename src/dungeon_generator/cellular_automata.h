@@ -1,3 +1,6 @@
+#ifndef CELLULAR_AUTOMATA_H
+#define CELLULAR_AUTOMATA_H
+
 /*
  * Cellular Automata algorithm:
  * Requirements:
@@ -18,16 +21,11 @@
  *
  */
 
-#include "dungeon_generator.h"
+#include "generator.h"
+#include "grid/grid.h"
 
-typedef enum{
-    Floor,
-    Wall,
-    Nothing
-}CellState
+DungeonGrid* generate_cave_grid(const DungeonParams *params);
 
-typedef struct{
-    size_t x_value;
-    size_t y_value;
-    CelLState current_state;
-}cell
+void free_cave_grid(DungeonGrid *grid);
+
+#endif
